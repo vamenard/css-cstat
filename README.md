@@ -1,6 +1,6 @@
 # css-cs-fixer
 
-This tool intensd to find unused css elemenst. It parses css files and then check in the webroot folder if the class is actually used, like a css codebase recursive grep.
+This tool intends to find unused css elements. It parses css files and then check in the webroot folder if the class is actually used, like a css codebase recursive grep.
 
 
 
