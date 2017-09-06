@@ -35,7 +35,6 @@ int css_file_search(const char *dir_name, char *files[], int *index) {
             strcpy(files[i], concat(dir_name, d_name) );
             (*index)++;
 	}
-
         if (entry->d_type & DT_DIR) {
             
             if (strcmp (d_name, "..") != 0 &&
@@ -43,13 +42,13 @@ int css_file_search(const char *dir_name, char *files[], int *index) {
                 strcmp(d_name, ".git") != 0) {
                 int path_length;
                 char path[PATH_MAX];
- 
                 path_length = snprintf (path, PATH_MAX,
                                         "%s/%s", dir_name, d_name);
                 if (path_length >= PATH_MAX) {
                     fprintf (stderr, "Path length has got too long.\n");
                     exit (EXIT_FAILURE);
                 }
+
                 css_file_search(path, files, index);
 
             }
@@ -60,7 +59,6 @@ int css_file_search(const char *dir_name, char *files[], int *index) {
                  dir_name, strerror (errno));
         exit (EXIT_FAILURE);
     }
-    
 
 
     return 1;

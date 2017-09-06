@@ -1,16 +1,23 @@
-const char *argp_program_version = "programname programversion";
-const char *argp_program_bug_address = "<your@email.address>";
-static char doc[] = "Your program description.";
-static char args_doc[] = "[FILENAME]...";
-static struct argp_option options[] = { 
-    { "line", 'l', 0, 0, "Compare lines instead of characters."},
-    { "word", 'w', 0, 0, "Compare words instead of characters."},
-    { "nocase", 'i', 0, 0, "Compare case insensitive instead of case sensitive."},
-    { 0 } 
+#include <stdlib.h>
+#include <argp.h>
+
+static char doc[] = "CSS CS Fixer scans for css files and analyse its usage";
+static char args_doc[] = "path";
+static struct argp_option options[] = {
+  {"verbose",  'v', 0,      0,  "Produce verbose output" },
+  {"quiet",    'q', 0,      0,  "Don't produce any output" },
+  {"silent",   's', 0,      OPTION_ALIAS },
+  {"output",   'o', "FILE", 0,
+   "Output to FILE instead of standard output" },
+  { 0 }
+};
+struct arguments
+{
+  char *args[1];
+  int silent, verbose;
+  char *output_file;
 };
 
-struct arguments {
-    enum { CHARACTER_MODE, WORD_MODE, LINE_MODE } mode;
-    bool isCaseInsensitive;
-};
+error_t parse_opt(int key, char *arg, struct argp_state *state);
+static struct argp argp = { options, parse_opt, args_doc, doc };
 

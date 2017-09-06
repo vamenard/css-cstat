@@ -1,17 +1,40 @@
-#include <argp.h>
-#include <stdbool.h>
-
 #include "argp.h"
 
-static error_t parse_opt(int key, char *arg, struct argp_state *state) {
+error_t parse_opt (int key, char *arg, struct argp_state *state) {
     struct arguments *arguments = state->input;
-    switch (key) {
-    case 'l': arguments->mode = LINE_MODE; break;
-    case 'w': arguments->mode = WORD_MODE; break;
-    case 'i': arguments->isCaseInsensitive = true; break;
-    case ARGP_KEY_ARG: return 0;
-    default: return ARGP_ERR_UNKNOWN;
-    }   
+
+    switch (key)
+    {
+    case 'q': case 's':
+      arguments->silent = 1;
+      break;
+    case 'v':
+      arguments->verbose = 1;
+      break;
+    case 'o':
+      arguments->output_file = arg;
+      break;
+
+    case ARGP_KEY_ARG:
+      if (state->arg_num >= 1)
+        /* Too many arguments. */
+        argp_usage (state);
+
+      arguments->args[state->arg_num] = arg;
+
+      break;
+
+    case ARGP_KEY_END:
+      if (state->arg_num < 1)
+        /* Not enough arguments. */
+        argp_usage (state);
+      break;
+
+    default:
+      return ARGP_ERR_UNKNOWN;
+    }
     return 0;
 }
+
+
 
