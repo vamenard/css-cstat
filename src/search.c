@@ -11,7 +11,7 @@
 #include "util.h"
 #include "search.h"
 
-int css_file_search(const char *dir_name, char *files[], int *index) {
+int file_search(const char *dir_name, char *files[], int *index, char *ext) {
 
     DIR *d;
     d = opendir(dir_name);
@@ -29,12 +29,14 @@ int css_file_search(const char *dir_name, char *files[], int *index) {
         }
         d_name = entry->d_name;
         if (!(entry->d_type & DT_DIR) &&
-            (strstr(d_name, ".css") != NULL)) {
+            (strstr(d_name, ext) != NULL)) {
             int i = (uintptr_t)*index; 
             files[i] = malloc(strlen(d_name) + 1);
-            strcpy(files[i], concat(dir_name, d_name) );
+            strcpy(files[i], concat(dir_name, concat("/", d_name)) );
             (*index)++;
 	}
+
+
         if (entry->d_type & DT_DIR) {
             
             if (strcmp (d_name, "..") != 0 &&
@@ -49,20 +51,19 @@ int css_file_search(const char *dir_name, char *files[], int *index) {
                     exit (EXIT_FAILURE);
                 }
 
-                css_file_search(path, files, index);
+                file_search(path, files, index, ext);
 
             }
 	}
     }
-    if (closedir (d)) {
+    rewinddir(d); 
+    if (closedir(d) == -1) {
         fprintf (stderr, "Could not close '%s': %s\n",
                  dir_name, strerror (errno));
         exit (EXIT_FAILURE);
     }
 
-
     return 1;
     
 }
-
 
