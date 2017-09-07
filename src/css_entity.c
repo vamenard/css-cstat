@@ -13,13 +13,13 @@
 
 int parse_root_entity( char *path[], char *root_classes[], int *cindex ) {
 
-    printf("\nOpening css file %s for analysis.\n", path);
+    printf("Opening css file %s for analysis.\n", path);
 
     char fline[10000];
 
     char *newline;
-    int i,count=0,occ=0;
-    int fp;
+    int i,count=0;
+    FILE *fp;
 
     fp = fopen(path,"r");
 
@@ -31,9 +31,6 @@ int parse_root_entity( char *path[], char *root_classes[], int *cindex ) {
         count++;
         if (newline=strchr(fline,'\n'))
             *newline='\0';
-
-        // todo clean up spaces and linebreaks
-        // are we having a . and a { in the same line
 
         if ((strstr(fline, "." ) !=NULL ) && ( strstr(fline, "{" ) !=NULL )  ) {
             
@@ -50,7 +47,7 @@ int parse_root_entity( char *path[], char *root_classes[], int *cindex ) {
             cleaned = one_line_array[0];
 
             if ((wordpos > 0) && (cleaned[0] == '.')) {
-                cleaned = cleaned++;
+                cleaned++;
                 if (cleaned[strlen(cleaned)-1] == ',') {
                     cleaned[strlen(cleaned)-1]  = 0;
                 }
@@ -76,6 +73,8 @@ int parse_root_entity( char *path[], char *root_classes[], int *cindex ) {
         }
 
     }
+    fclose(fp);
+
     return 0;
 }
 

@@ -6,8 +6,8 @@ int grep_single_file( char *path[], char dummyclass[], int verbose ) {
  
     char fline[100];
     char *newline;
-    int i,count=0,occ=0;
-    int fp;
+    int count=0,occ=0;
+    FILE *fp;
 
     fp = fopen(path,"r");
 
@@ -21,7 +21,7 @@ int grep_single_file( char *path[], char dummyclass[], int verbose ) {
         }
 
     }
-
+    fclose(fp);
     if (verbose) {
         printf("\%d Occurences found", occ);
     }

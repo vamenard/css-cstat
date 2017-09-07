@@ -11,7 +11,7 @@
 #include "util.h"
 #include "search.h"
 
-int file_search(const char *dir_name, char *files[], int *index, char *ext) {
+int file_search(const char *dir_name, char *files[], int *index, char *tpl[], int *tindex) {
 
     DIR *d;
     d = opendir(dir_name);
@@ -28,15 +28,25 @@ int file_search(const char *dir_name, char *files[], int *index, char *ext) {
             break;
         }
         d_name = entry->d_name;
-        if (!(entry->d_type & DT_DIR) &&
-            (strstr(d_name, ext) != NULL)) {
-            int i = (uintptr_t)*index; 
-            files[i] = malloc(strlen(d_name) + 1);
-            strcpy(files[i], concat(dir_name, concat("/", d_name)) );
-            (*index)++;
-	}
+        if (!(entry->d_type & DT_DIR)) {
+            if (strstr(d_name, ".css") != NULL) {
 
+                if ((uintptr_t)*tindex < 255) { // prevent malloc exaustion
+                    files[(uintptr_t)*index] = malloc(strlen(concat(dir_name, concat("/", d_name))) + 1);
+                    strcpy(files[(uintptr_t)*index], concat(dir_name, concat("/", d_name)) );
+                    (*index)++;
+                }
+	    }
+            if ((strstr(d_name, ".html") != NULL) && (strstr(d_name, ".css") == NULL))  {
+                if ((uintptr_t)*tindex < 255) { // prevent malloc exaustion
 
+                    tpl[(uintptr_t)*tindex] = malloc(strlen(concat(dir_name, concat("/", d_name))) + 1);
+                    strcpy(tpl[(uintptr_t)*tindex], concat(dir_name, concat("/", d_name)) );
+                    (*tindex)++;
+
+               }
+            }
+        }
         if (entry->d_type & DT_DIR) {
             
             if (strcmp (d_name, "..") != 0 &&
@@ -51,13 +61,12 @@ int file_search(const char *dir_name, char *files[], int *index, char *ext) {
                     exit (EXIT_FAILURE);
                 }
 
-                file_search(path, files, index, ext);
+                file_search(path, files, index, tpl, tindex);
 
             }
 	}
     }
-    rewinddir(d); 
-    if (closedir(d) == -1) {
+    if (closedir(d)) {
         fprintf (stderr, "Could not close '%s': %s\n",
                  dir_name, strerror (errno));
         exit (EXIT_FAILURE);
