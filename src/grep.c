@@ -1,9 +1,10 @@
 #include "grep.h"
 
-int grep_single_file( char *path[], char dummyclass[], int verbose ) {
+int grep_single_file( char path[], char dummyclass[], int verbose ) {
 
-    printf("\nOpening %s looking for %s\n", path, dummyclass);
- 
+    if (verbose) { 
+        printf("\nOpening %s looking for %s\n", path, dummyclass);
+    }
     char fline[100];
     char *newline;
     int count=0,occ=0;
@@ -13,8 +14,10 @@ int grep_single_file( char *path[], char dummyclass[], int verbose ) {
 
     while (fgets(fline,100,fp)!=NULL) {
         count++;
-        if (newline=strchr(fline,'\n'))
+        newline = strchr(fline,'\n');
+        if (newline != NULL) {
             *newline='\0';
+        }
         if (strstr(fline, dummyclass )!=NULL) {
             printf("%s %d %s",path,count,fline);
             occ++;  

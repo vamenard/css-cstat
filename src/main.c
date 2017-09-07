@@ -14,12 +14,10 @@ int main(int argc, char *argv[])
     argp_parse (&argp, argc, argv, 0, 0, &arguments);
 
     static char *files[255];
-    static char *root_classes[20000];
+    static char *root_classes[255];
     static char *tpl[255];
 
-    int index = 0;
-    int cindex = 0;
-    int tindex = 0;
+    int index = 0, cindex = 0, tindex = 0;
 
     file_search(arguments.args[0], files, &index, tpl, &tindex);
 
@@ -40,9 +38,9 @@ int main(int argc, char *argv[])
     int c;
     printf("\n");
 
-    for (c = 0; c < index; c++)
-        parse_root_entity( files[c], &root_classes, &cindex );
-
+    for (c = 0; c < index; c++) {
+        parse_root_entity( files[c], root_classes, &cindex );
+    }
     if (arguments.verbose) {
         for (c = 0; c < cindex; c++)
             printf("Root class found \"%s\"\n", root_classes[c]);

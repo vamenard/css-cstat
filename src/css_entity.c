@@ -11,7 +11,7 @@
 
 #include "util.h"
 
-int parse_root_entity( char *path[], char *root_classes[], int *cindex ) {
+int parse_root_entity( char path[], char *root_classes[], int *cindex ) {
 
     printf("Opening css file %s for analysis.\n", path);
 
@@ -29,12 +29,13 @@ int parse_root_entity( char *path[], char *root_classes[], int *cindex ) {
     int duplicate = 0;
     while (fgets(fline,100,fp)!=NULL) {
         count++;
-        if (newline=strchr(fline,'\n'))
+        newline = strchr(fline,'\n');
+        if (newline != NULL) {
             *newline='\0';
+        }
 
         if ((strstr(fline, "." ) !=NULL ) && ( strstr(fline, "{" ) !=NULL )  ) {
             
-            // valid line extract class name
             int wordpos = 0;
             p = strtok (fline, " ");
 
@@ -51,8 +52,6 @@ int parse_root_entity( char *path[], char *root_classes[], int *cindex ) {
                 if (cleaned[strlen(cleaned)-1] == ',') {
                     cleaned[strlen(cleaned)-1]  = 0;
                 }
-
-                // check for uniqueness
 
                 int intc = (uintptr_t)*cindex;
                 duplicate = 0;
