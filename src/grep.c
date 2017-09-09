@@ -18,8 +18,7 @@ int grep_single_file( char path[], char dummyclass[], int verbose ) {
         if (newline != NULL) {
             *newline='\0';
         }
-        if (strstr(fline, dummyclass )!=NULL) {
-            printf("%s %d %s",path,count,fline);
+        if (strstr(fline, dummyclass ) != NULL) {
             occ++;  
         }
 

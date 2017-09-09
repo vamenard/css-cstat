@@ -1,19 +1,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
 #include <sys/types.h>
-#include <errno.h>
 #include <dirent.h>
 #include <limits.h>
 #include <inttypes.h>
 #include <stdint.h>
 
 #include "util.h"
+#include "grep.h"
 
-int parse_root_entity( char path[], char *root_classes[], int *cindex ) {
+int parse_root_entity( char path[], char *root_classes[], int *cindex, int verbose ) {
 
-    printf("Opening css file %s for analysis.\n", path);
+    if (verbose) {
+        printf("Opening css file %s for analysis.\n", path);
+    }
 
     char fline[10000];
 
@@ -62,9 +63,9 @@ int parse_root_entity( char path[], char *root_classes[], int *cindex ) {
                     }
                 }
                 if (duplicate == 0) {
-                root_classes[intc] = malloc(strlen(cleaned) + 1);
-                strcpy(root_classes[intc], cleaned);
-                (*cindex)++;
+                    root_classes[intc] = malloc(strlen(cleaned) + 1);
+                    strcpy(root_classes[intc], cleaned);
+                    (*cindex)++;
                 }
                
             }
@@ -75,5 +76,38 @@ int parse_root_entity( char path[], char *root_classes[], int *cindex ) {
     fclose(fp);
 
     return 0;
+}
+
+
+int build_css_xref( char *tpl[], int *tindex, char *root_classes[], int *cindex, int verbose) {
+
+    int occ = 0, socc = 0;
+    int c1 = 0, c2 = 0;
+    char *analysis[1024][1014];
+
+    for (c1 = 0; c1 < (*cindex); c1++) {
+
+        for (c2 = 0; c2 < (*tindex); c2++) {
+            socc = grep_single_file( tpl[c2], root_classes[c1], verbose);
+            occ = occ + socc;
+            socc = 0;
+        }
+
+        analysis[c1][0] = malloc(strlen( root_classes[c1] ) + 1);
+        strcpy(analysis[c1][0], root_classes[c1]);
+
+        char *pstr = itoa(occ, 10);
+        if ((pstr != NULL) && (pstr[0] == '\0')) { 
+            pstr = "0";
+        } 
+        analysis[c1][1] = malloc(strlen( pstr ) + 1);
+        strcpy(analysis[c1][1], pstr);
+        occ = 0;
+    }
+    for (c1 = 0; c1 < (*cindex); c1++) {
+        printf("Class %s - %s occurences\n", analysis[c1][0], analysis[c1][1]);
+    }
+    
+    return 1;
 }
 
