@@ -9,7 +9,6 @@ To compile use : gcc -Wall -o css-cstat util.c search.c argp.c grep.c css_entity
 
 ```
 css-cstat [OPTION...] path
-
 ```
 
 ## Output example :
@@ -27,6 +26,6 @@ Class clear - 6 occurences
 
 ## Contributor
 
-Vincent Menard <github@vcpu.com> 2017 - 2026
+Vincent Menard <github@vcpu.com> 2016 - 2026
 
 
